@@ -13,6 +13,9 @@ cmake_minimum_required(VERSION 3.7.2)
 # See https://github.com/mokshasoft/bare-metal-idris-manifest
 #
 
+# Include functions used to build Idris source
+include(tools/CMake/Idris.cmake)
+
 # Add all directories needed to build the Idris apps
 add_subdirectory(starterwarefree)
 add_subdirectory(starterwarefree-idris-ffi)
