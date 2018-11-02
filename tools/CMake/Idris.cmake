@@ -8,6 +8,9 @@
 
 cmake_minimum_required(VERSION 3.7.2)
 
+function(idris_add_module module srcs)
+endfunction()
+
 function(idris_add_app app srcs)
     # add an ${app} target
     add_custom_command(
