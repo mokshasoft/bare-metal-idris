@@ -14,17 +14,17 @@ endfunction()
 function(idris_add_app app srcs)
     # add an ${app} target
     add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/main.c
+        OUTPUT main.c
         COMMAND idris
             -i ${CMAKE_CURRENT_SOURCE_DIR}
             --sourcepath ${CMAKE_CURRENT_SOURCE_DIR}
             --codegen C
             --codegenonly
-            -o ${CMAKE_CURRENT_BINARY_DIR}/main.c
+            -o main.c
             ${srcs}
         DEPENDS ${srcs}
     )
-    add_custom_target(${app} DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/main.c)
+    add_custom_target(${app} DEPENDS main.c)
 endfunction()
 
 function(idris_link_modules app modules)
