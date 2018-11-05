@@ -12,7 +12,11 @@ function(idris_add_module module)
     set_property(GLOBAL PROPERTY idris_module_include_dir_${module} ${CMAKE_CURRENT_SOURCE_DIR})
 endfunction()
 
-function(idris_module_link_libraries module libs)
+function(idris_module_link_libraries module libraries)
+    # get the libraries
+    set(libs ${ARGV})
+    list(REMOVE_AT libs 0)
+    # store libraries
     set_property(GLOBAL PROPERTY idris_module_link_libraries_${module} ${libs})
 endfunction()
 
@@ -36,7 +40,7 @@ function(idris_add_app app srcs)
         endif()
     endforeach(mod)
 
-    # add an ${app} target
+    # add a target that transcompiles Idris to C
     add_custom_command(
         OUTPUT main.c
         COMMAND idris
@@ -49,5 +53,11 @@ function(idris_add_app app srcs)
             ${srcs}
         DEPENDS ${srcs}
     )
-    add_custom_target(${app} DEPENDS main.c)
+    add_custom_target(${app}-idr2c DEPENDS main.c)
+
+    # Compile the generated C-file to a static library
+    add_executable(${app} EXCLUDE_FROM_ALL main.c)
+    target_link_libraries(
+        ${app}
+    )
 endfunction()
