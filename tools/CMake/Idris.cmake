@@ -60,6 +60,10 @@ function(idris_add_app app srcs)
     target_link_libraries(
         ${app}
         sel4-idris-rts
+	drivers
+	platform
+	system_config
+	utils
         -T ${CMAKE_SOURCE_DIR}/starterwarefree/build/beaglebone.lds
     )
     gen_bin(${app})
