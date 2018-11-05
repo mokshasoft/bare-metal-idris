@@ -59,5 +59,8 @@ function(idris_add_app app srcs)
     add_executable(${app} EXCLUDE_FROM_ALL main.c)
     target_link_libraries(
         ${app}
+        sel4-idris-rts
+        -T ${CMAKE_SOURCE_DIR}/starterwarefree/build/beaglebone.lds
     )
+    gen_bin(${app})
 endfunction()
