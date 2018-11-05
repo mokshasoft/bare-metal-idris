@@ -8,15 +8,40 @@
 
 cmake_minimum_required(VERSION 3.7.2)
 
-function(idris_add_module module srcs)
+function(idris_add_module module)
+    set_property(GLOBAL PROPERTY idris_module_include_dir_${module} ${CMAKE_CURRENT_SOURCE_DIR})
+endfunction()
+
+function(idris_module_link_libraries module libs)
+    set_property(GLOBAL PROPERTY idris_module_link_libraries_${module} ${libs})
+endfunction()
+
+function(idris_app_link_modules app modules)
+    # get the modules
+    set(mods ${ARGV})
+    list(REMOVE_AT mods 0)
+    # store modules
+    set_property(GLOBAL PROPERTY idris_app_link_modules_${app} "${mods}")
 endfunction()
 
 function(idris_add_app app srcs)
+    # find and add all include directories from the app modules
+    get_property(app_inc_mods GLOBAL PROPERTY idris_app_link_modules_${app})
+    foreach(mod ${app_inc_mods})
+        get_property(mod_inc_dir GLOBAL PROPERTY idris_module_include_dir_${mod})
+        if("${mod_inc_dir}" STREQUAL "")
+            message(FATAL_ERROR "Did not find Idris module ${mod}")
+        else()
+            set(app_inc_dirs "${app_inc_dirs} -i ${mod_inc_dir}")
+        endif()
+    endforeach(mod)
+
     # add an ${app} target
     add_custom_command(
         OUTPUT main.c
         COMMAND idris
             -i ${CMAKE_CURRENT_SOURCE_DIR}
+            ${app_inc_dirs}
             --sourcepath ${CMAKE_CURRENT_SOURCE_DIR}
             --codegen C
             --codegenonly
@@ -25,7 +50,4 @@ function(idris_add_app app srcs)
         DEPENDS ${srcs}
     )
     add_custom_target(${app} DEPENDS main.c)
-endfunction()
-
-function(idris_link_modules app modules)
 endfunction()

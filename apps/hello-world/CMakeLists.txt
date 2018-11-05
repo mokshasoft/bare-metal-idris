@@ -14,4 +14,9 @@ file(GLOB static
     *.idr
 )
 
+idris_app_link_modules(
+    hello-world
+    StarterWareFree.Drivers
+)
+
 idris_add_app(hello-world ${static})
