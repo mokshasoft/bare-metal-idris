@@ -55,23 +55,19 @@ function(idris_add_app app srcs)
     )
     add_custom_target(${app}-idr2c DEPENDS main.c)
 
-    # Compile the generated C-file to a static library
-    add_library(${app}-static STATIC EXCLUDE_FROM_ALL main.c)
-    add_dependencies(${app}-static ${app}-idr2c)
+    # Compile and link everything to a static binary
+    add_executable(${app} EXCLUDE_FROM_ALL
+        main.c
+	${CMAKE_SOURCE_DIR}/libsel4-idris-rts/rts/bare-metal/idris_main.c
+    )
+    add_dependencies(${app} ${app}-idr2c)
     target_link_libraries(
-	${app}-static
-        idris-rts-bare-metal
+        ${app}
+	idris-rts-bare-metal
 	drivers
 	platform
 	system_config
 	utils
-    )
-
-    # Compile and link everything to a static binary
-    add_executable(${app} EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/bare-metal-idris/tools/CMake/dummy.c)
-    target_link_libraries(
-        ${app}
-	${app}-static
         -T ${CMAKE_SOURCE_DIR}/starterwarefree/build/beaglebone.lds
     )
     gen_bin(${app})
