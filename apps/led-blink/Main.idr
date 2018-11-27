@@ -11,6 +11,12 @@ module Main
 import StarterWareFree.Drivers
 import StarterWareFree.Platform
 
+GPIO_INSTANCE_ADDRESS : Int
+GPIO_INSTANCE_ADDRESS = 0x4804C000
+
+GPIO_INSTANCE_PIN_NUMBER : Int
+GPIO_INSTANCE_PIN_NUMBER = 23
+
 setupGpio : IO ()
 setupGpio = do
     -- Enabling functional clocks for GPIO1 instance
@@ -31,6 +37,12 @@ setupGpio = do
         GPIO_INSTANCE_PIN_NUMBER
         GPIO_DIR_OUTPUT
 
+ONOFFTIME : Int
+ONOFFTIME = 50000000
+
+delay : Int -> IO ()
+delay _ = ?delay_impl
+
 blinkLed : IO ()
 blinkLed = do
     -- Driving a logic HIGH on the GPIO pin
@@ -39,7 +51,7 @@ blinkLed = do
         GPIO_INSTANCE_PIN_NUMBER
         GPIO_PIN_HIGH
 
-    Delay ONOFFTIME
+    delay ONOFFTIME
 
     -- Driving a logic LOW on the GPIO pin
     GPIOPinWrite
@@ -47,7 +59,7 @@ blinkLed = do
         GPIO_INSTANCE_PIN_NUMBER
         GPIO_PIN_LOW
 
-    Delay ONOFFTIME
+    delay ONOFFTIME
 
     -- Repeat blink
     blinkLed
