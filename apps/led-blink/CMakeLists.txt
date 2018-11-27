@@ -7,3 +7,17 @@
 #
 
 cmake_minimum_required(VERSION 3.7.2)
+
+project(led-blink C)
+
+file(GLOB static
+    *.idr
+)
+
+idris_app_link_modules(
+    led-blink
+    StarterWareFree.Drivers
+    StarterWareFree.Platform
+)
+
+idris_add_app(led-blink ${static})

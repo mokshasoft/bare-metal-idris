@@ -9,6 +9,7 @@ See "LICENSE_BSD2.txt" for details.
 module Main
 
 import StarterWareFree.Drivers
+import StarterWareFree.Platform
 
 setupGpio : IO ()
 setupGpio = do
