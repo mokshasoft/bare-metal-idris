@@ -21,6 +21,14 @@ function(idris_module_link_libraries module libraries)
     set_property(GLOBAL PROPERTY idris_module_link_libraries_${module} ${libs})
 endfunction()
 
+function(idris_app_link_libraries app libraries)
+    # get the libraries
+    set(libs ${ARGV})
+    list(REMOVE_AT libs 0)
+    # store libraries
+    set_property(GLOBAL PROPERTY idris_app_link_libraries_${app} ${libs})
+endfunction()
+
 function(idris_app_link_modules app modules)
     # get the modules
     set(mods ${ARGV})
@@ -33,6 +41,7 @@ function(idris_add_app app srcs)
     # find and add all include directories from the app modules
     get_property(app_inc_mods GLOBAL PROPERTY idris_app_link_modules_${app})
     foreach(mod ${app_inc_mods})
+	# get dependent files and their root folders
         get_property(mod_inc_dir GLOBAL PROPERTY idris_module_include_dir_${mod})
         get_property(mod_dep_files GLOBAL PROPERTY idris_module_dependent_files_${mod})
         if("${mod_inc_dir}" STREQUAL "")
@@ -41,7 +50,18 @@ function(idris_add_app app srcs)
             set(app_inc_dirs ${app_inc_dirs} -i ${mod_inc_dir})
             set(app_dep_files ${app_dep_files} ${mod_dep_files})
         endif()
+        # get all dependent libraries
+        get_property(mod_link_lib GLOBAL PROPERTY idris_module_link_libraries_${mod})
+        if(NOT "${mod_link_lib}" STREQUAL "")
+            set(app_link_lib ${app_link_lib} ${mod_link_lib})
+        endif()
     endforeach(mod)
+
+    # get all the apps dependent libraries
+    get_property(link_lib GLOBAL PROPERTY idris_app_link_libraries_${app})
+    if(NOT "${link_lib}" STREQUAL "")
+        set(app_link_lib ${app_link_lib} ${link_lib})
+    endif()
 
     # add a target that transcompiles Idris to C
     add_custom_command(
@@ -67,6 +87,7 @@ function(idris_add_app app srcs)
     target_link_libraries(
         ${app}
 	idris-rts-bare-metal
+	${app_link_lib}
 	drivers
 	platform
 	system_config
