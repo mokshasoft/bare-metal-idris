@@ -8,8 +8,9 @@
 
 cmake_minimum_required(VERSION 3.7.2)
 
-function(idris_add_module module)
+function(idris_add_module module files)
     set_property(GLOBAL PROPERTY idris_module_include_dir_${module} ${CMAKE_CURRENT_SOURCE_DIR})
+    set_property(GLOBAL PROPERTY idris_module_dependent_files_${module} ${files})
 endfunction()
 
 function(idris_module_link_libraries module libraries)
@@ -33,10 +34,12 @@ function(idris_add_app app srcs)
     get_property(app_inc_mods GLOBAL PROPERTY idris_app_link_modules_${app})
     foreach(mod ${app_inc_mods})
         get_property(mod_inc_dir GLOBAL PROPERTY idris_module_include_dir_${mod})
+        get_property(mod_dep_files GLOBAL PROPERTY idris_module_dependent_files_${mod})
         if("${mod_inc_dir}" STREQUAL "")
             message(FATAL_ERROR "Did not find Idris module ${mod}")
         else()
             set(app_inc_dirs ${app_inc_dirs} -i ${mod_inc_dir})
+            set(app_dep_files ${app_dep_files} ${mod_dep_files})
         endif()
     endforeach(mod)
 
@@ -51,7 +54,7 @@ function(idris_add_app app srcs)
             --codegenonly
             -o main.c
             ${srcs}
-        DEPENDS ${srcs}
+        DEPENDS ${srcs} ${app_dep_files}
     )
     add_custom_target(${app}-idr2c DEPENDS main.c)
 
