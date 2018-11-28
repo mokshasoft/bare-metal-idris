@@ -11,6 +11,8 @@ module Main
 import StarterWareFree.Drivers
 import StarterWareFree.Platform
 
+%include c "busywait.h"
+
 GPIO_INSTANCE_ADDRESS : Int
 GPIO_INSTANCE_ADDRESS = 0x4804C000
 
@@ -41,7 +43,7 @@ ONOFFTIME : Int
 ONOFFTIME = 50000000
 
 delay : Int -> IO ()
-delay _ = ?delay_impl
+delay loops = foreign FFI_C "busywait" (Int -> IO ()) loops
 
 blinkLed : IO ()
 blinkLed = do

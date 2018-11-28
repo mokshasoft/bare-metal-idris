@@ -8,6 +8,13 @@
 
 cmake_minimum_required(VERSION 3.7.2)
 
+project(busywait C)
+file(GLOB ffi_files
+    busywait.c
+)
+add_library(busywait EXCLUDE_FROM_ALL ${ffi_files})
+target_include_directories(busywait PUBLIC .)
+
 project(led-blink C)
 
 file(GLOB static
@@ -19,5 +26,5 @@ idris_app_link_modules(
     StarterWareFree.Drivers
     StarterWareFree.Platform
 )
-
+idris_app_link_libraries(led-blink busywait)
 idris_add_app(led-blink ${static})
