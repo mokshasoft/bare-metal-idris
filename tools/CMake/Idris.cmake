@@ -84,6 +84,8 @@ function(idris_add_app app srcs)
 	${CMAKE_SOURCE_DIR}/libsel4-idris-rts/rts/bare-metal/idris_main.c
     )
     add_dependencies(${app} ${app}-idr2c)
+    # Ignore warning from unused loop label in generated code in Idris RTS
+    set_target_properties(${app} PROPERTIES COMPILE_FLAGS "-Wno-unused-label")
     target_link_libraries(
         ${app}
 	idris-rts-bare-metal
