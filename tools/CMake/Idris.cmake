@@ -81,13 +81,13 @@ function(idris_add_app app srcs)
     # Compile and link everything to a static binary
     add_executable(${app} EXCLUDE_FROM_ALL
         main.c
-	${CMAKE_SOURCE_DIR}/libsel4-idris-rts/rts/bare-metal/idris_main.c
     )
     add_dependencies(${app} ${app}-idr2c)
     # Ignore warning from unused loop label in generated code in Idris RTS
     set_target_properties(${app} PROPERTIES COMPILE_FLAGS "-Wno-unused-label")
     target_link_libraries(
         ${app}
+	-Wl,--start-group
 	idris-rts-bare-metal
 	${app_link_lib}
 	drivers
