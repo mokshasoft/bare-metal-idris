@@ -8,5 +8,10 @@ See "LICENSE_BSD2.txt" for details.
 
 module Main
 
+import StarterWareFree.Utils
+
 main : IO ()
-main = putStrLn "hello, CMake"
+main = do
+    ConsoleUtilsInit
+    ConsoleUtilsSetType 0
+    ConsoleUtilsPrintf "Hello, bare-metal Idris"
