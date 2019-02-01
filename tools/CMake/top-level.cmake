@@ -18,6 +18,6 @@ include(tools/CMake/Idris.cmake)
 
 # Add all directories needed to build the Idris apps
 add_subdirectory(starterwarefree)
-add_subdirectory(starterwarefree-idris-ffi)
-add_subdirectory(libsel4-idris-rts)
-add_subdirectory(bare-metal-idris)
+add_subdirectory(starterwarefree-ffi)
+add_subdirectory(idris-rts)
+add_subdirectory(apps)
